@@ -842,6 +842,12 @@ func syncResourcePath(resource string) (string, error) {
 // flat paths.
 var resourceIDFieldOverrides = map[string]string{
 	"patent-interferences-decisions-search-download": "interferenceNumber",
+	"patent-trials-proceedings-search-download":      "trialNumber",
+	"patent-trials-decisions-search-download":        "trialNumber",
+	"patent-trials-documents-search-download":        "trialNumber",
+	"patent-appeals-decisions-search-download":       "appealNumber",
+	"petition-decisions-search-download":             "petitionDecisionRecordIdentifier",
+	"datasets":                                       "productIdentifier",
 }
 
 // genericIDFieldFallbacks is the runtime safety net for resources that did

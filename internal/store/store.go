@@ -768,7 +768,13 @@ func (s *Store) UpsertPetition(data json.RawMessage) error {
 // child path-item annotated with x-resource-id resolves the same as a flat
 // path-item.
 var resourceIDFieldOverrides = map[string]string{
-	"patent-interferences-decisions-search-download": "interferenceNumber",
+	"patent-interferences-decisions-search-download":  "interferenceNumber",
+	"patent-trials-proceedings-search-download":       "trialNumber",
+	"patent-trials-decisions-search-download":         "trialNumber",
+	"patent-trials-documents-search-download":         "trialNumber",
+	"patent-appeals-decisions-search-download":        "appealNumber",
+	"petition-decisions-search-download":              "petitionDecisionRecordIdentifier",
+	"datasets":                                        "productIdentifier",
 }
 
 // genericIDFieldFallbacks is the runtime safety net for resources that did

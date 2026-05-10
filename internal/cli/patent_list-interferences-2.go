@@ -94,7 +94,7 @@ func newPatentListInterferences2Cmd(flags *rootFlags) *cobra.Command {
 	cmd.Flags().StringVar(&flagFacets, "facets", "", "List of fields names to be faceted upon separated by comma (<b>,</b>)")
 	cmd.Flags().StringVar(&flagFields, "fields", "", "Limits the response by specifying which fields from dataset should be included.")
 	cmd.Flags().StringVar(&flagFilters, "filters", "", "Filter data by supplying filter parameter. Provide field name and its value.")
-	cmd.Flags().StringVar(&flagRangeFilters, "range-filters", "", "Filter the data by supplying range of values. Applicable for number and date type fields.")
+	cmd.Flags().StringVar(&flagRangeFilters, "range-filters", "", "Range filter (format: 'field from:to', e.g., 'applicationMetaData.filingDate 2024-01-01:2025-01-01')")
 	cmd.Flags().StringVar(&flagFormat, "format", "", "Download Format")
 	cmd.Flags().BoolVar(&flagAll, "all", false, "Fetch all pages")
 

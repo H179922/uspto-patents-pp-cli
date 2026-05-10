@@ -25,7 +25,7 @@ func newPatentListApplicationsCmd(flags *rootFlags) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list-applications",
 		Short: "Query parameters are optional. When no query parameters supplied, top 25 applications are returned",
-		Example: "  uspto-patents-pp-cli patent list-applications",
+		Example: "  uspto-patents-pp-cli patent list-applications\n  uspto-patents-pp-cli patent list-applications --range-filters 'applicationMetaData.filingDate 2024-01-01:2025-01-01'",
 		Annotations: map[string]string{"pp:endpoint": "patent.list-applications", "pp:method": "GET", "pp:path": "/api/v1/patent/applications/search", "mcp:read-only": "true"},
 		RunE: func(cmd *cobra.Command, args []string) error {
 			c, err := flags.newClient()
@@ -92,7 +92,7 @@ func newPatentListApplicationsCmd(flags *rootFlags) *cobra.Command {
 	cmd.Flags().StringVar(&flagFacets, "facets", "", "List of fields names to be faceted upon separated by comma (<b>,</b>)")
 	cmd.Flags().StringVar(&flagFields, "fields", "", "Limits the response by specifying which fields from dataset should be included.")
 	cmd.Flags().StringVar(&flagFilters, "filters", "", "Filter data by supplying filter parameter. Provide field name and its value.")
-	cmd.Flags().StringVar(&flagRangeFilters, "range-filters", "", "Filter the data by supplying range of values. Applicable for number and date type fields.")
+	cmd.Flags().StringVar(&flagRangeFilters, "range-filters", "", "Range filter (format: 'field from:to', e.g., 'applicationMetaData.filingDate 2024-01-01:2025-01-01')")
 	cmd.Flags().BoolVar(&flagAll, "all", false, "Fetch all pages")
 
 	return cmd

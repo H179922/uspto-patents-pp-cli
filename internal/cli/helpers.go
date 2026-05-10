@@ -431,6 +431,52 @@ func filterFields(data json.RawMessage, fields string) json.RawMessage {
 	if len(paths) == 0 {
 		return data
 	}
+
+	// Auto-unwrap: when the response is a single-array envelope (e.g.
+	// {"patentFileWrapperDataBag": [...], "count": 300}) and none of the
+	// requested path heads match any top-level key, descend into the lone
+	// array automatically so users can write --select relative to the item
+	// instead of the full API envelope path.
+	var envelope map[string]json.RawMessage
+	if err := json.Unmarshal(data, &envelope); err == nil && len(envelope) > 0 {
+		anyMatch := false
+		for _, p := range paths {
+			if len(p) == 0 {
+				continue
+			}
+			head := p[0] // already lowercased
+			for k := range envelope {
+				if strings.ToLower(k) == head {
+					anyMatch = true
+					break
+				}
+			}
+			if anyMatch {
+				break
+			}
+		}
+
+		if !anyMatch {
+			var arrayKey string
+			var arrayData json.RawMessage
+			arrayCount := 0
+			for k, v := range envelope {
+				var arr []json.RawMessage
+				if err := json.Unmarshal(v, &arr); err == nil && len(arr) > 0 {
+					arrayKey = k
+					arrayData = v
+					arrayCount++
+				}
+			}
+			if arrayCount == 1 {
+				filtered := filterFieldsRec(arrayData, paths)
+				envelope[arrayKey] = filtered
+				result, _ := json.Marshal(envelope)
+				return result
+			}
+		}
+	}
+
 	return filterFieldsRec(data, paths)
 }
 
