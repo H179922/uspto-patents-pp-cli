@@ -1,8 +1,0 @@
-{
-  "dir": "/Users/auser/printing-press/.runstate/ghst-infra-c491bdee/runs/20260509-092118/working/uspto-patents-pp-cli",
-  "workflows": null,
-  "verdict": "workflow-pass",
-  "issues": [
-    "no workflow manifest found, skipping"
-  ]
-}
