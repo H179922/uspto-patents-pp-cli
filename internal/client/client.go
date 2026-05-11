@@ -92,12 +92,19 @@ func (c *Client) ProbeGet(path string) (int, error) {
 }
 
 func (c *Client) cacheKey(path string, params map[string]string) string {
-	key := path
-	for k, v := range params {
-		key += k + "=" + v
+	h := sha256.New()
+	h.Write([]byte(path))
+	// Sort keys for deterministic cache keys
+	keys := make([]string, 0, len(params))
+	for k := range params {
+		keys = append(keys, k)
 	}
-	h := sha256.Sum256([]byte(key))
-	return hex.EncodeToString(h[:8])
+	sort.Strings(keys)
+	for _, k := range keys {
+		h.Write([]byte(k))
+		h.Write([]byte(params[k]))
+	}
+	return hex.EncodeToString(h.Sum(nil)[:8])
 }
 
 func (c *Client) readCache(path string, params map[string]string) (json.RawMessage, bool) {

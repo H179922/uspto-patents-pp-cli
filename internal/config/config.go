@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"strings"
 	"time"
 
 	"github.com/pelletier/go-toml/v2"
@@ -83,27 +82,10 @@ func (c *Config) AuthHeader() string {
 	if c.AuthHeaderVal != "" {
 		return c.AuthHeaderVal
 	}
-	token := c.UsptoApiKey
-	if token == "" {
-		return ""
-	}
 	if c.UsptoApiKey == "" {
 		return ""
 	}
-	return token
-}
-
-func applyAuthFormat(format string, replacements map[string]string) string {
-	if format == "" {
-		return ""
-	}
-	for key, value := range replacements {
-		format = strings.ReplaceAll(format, "{"+key+"}", value)
-	}
-	if strings.Contains(format, "{") {
-		return ""
-	}
-	return format
+	return c.UsptoApiKey
 }
 
 func (c *Config) SaveTokens(clientID, clientSecret, accessToken, refreshToken string, expiry time.Time) error {
@@ -149,5 +131,3 @@ func (c *Config) save() error {
 	return os.WriteFile(c.Path, data, 0o600)
 }
 
-// Ensure strings import is used
-var _ = strings.ReplaceAll

@@ -58,6 +58,20 @@ and full resync. After archiving, use 'search' for instant full-text search.`,
 			resources := []string{"datasets", "patent", "patent-appeals-decisions-search-download", "patent-applications-search-download", "patent-interferences-decisions-search-download", "patent-trials-decisions-search-download", "patent-trials-documents-search-download", "patent-trials-proceedings-search-download", "petition", "petition-decisions-search-download",  }
 			totalSynced := 0
 
+			// Map resource names to their correct API endpoint paths
+			resourcePaths := map[string]string{
+				"datasets":                                       "/api/v1/datasets/products/search",
+				"patent":                                         "/api/v1/patent/status-codes",
+				"patent-appeals-decisions-search-download":       "/api/v1/patent/appeals/decisions/search/download",
+				"patent-applications-search-download":            "/api/v1/patent/applications/search/download",
+				"patent-interferences-decisions-search-download": "/api/v1/patent/interferences/decisions/search/download",
+				"patent-trials-decisions-search-download":        "/api/v1/patent/trials/decisions/search/download",
+				"patent-trials-documents-search-download":        "/api/v1/patent/trials/documents/search/download",
+				"patent-trials-proceedings-search-download":      "/api/v1/patent/trials/proceedings/search/download",
+				"petition":                                       "/api/v1/petition/decisions/search",
+				"petition-decisions-search-download":             "/api/v1/petition/decisions/search/download",
+			}
+
 			for _, resource := range resources {
 				cursor := ""
 				if !full {
@@ -74,9 +88,15 @@ and full resync. After archiving, use 'search' for instant full-text search.`,
 					params["after"] = cursor
 				}
 
+				apiPath, ok := resourcePaths[resource]
+				if !ok {
+					fmt.Fprintf(cmd.ErrOrStderr(), "  warning: unknown resource %s, skipping\n", resource)
+					continue
+				}
+
 				count := 0
 				for {
-					data, fetchErr := c.Get("/"+resource, params)
+					data, fetchErr := c.Get(apiPath, params)
 					if fetchErr != nil {
 						fmt.Fprintf(cmd.ErrOrStderr(), "  warning: %s: %v\n", resource, fetchErr)
 						break

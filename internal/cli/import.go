@@ -17,7 +17,6 @@ import (
 func newImportCmd(flags *rootFlags) *cobra.Command {
 	var inputFile string
 	var dryRun bool
-	var batchSize int
 
 	cmd := &cobra.Command{
 		Use:   "import <resource>",
@@ -42,7 +41,24 @@ but do not stop the import.`,
 			c.DryRun = dryRun
 
 			resource := args[0]
-			path := "/" + resource
+
+			// Map resource names to their correct API endpoint paths
+			importPaths := map[string]string{
+				"datasets":                                       "/api/v1/datasets/products/search",
+				"patent":                                         "/api/v1/patent/status-codes",
+				"patent-appeals-decisions-search-download":       "/api/v1/patent/appeals/decisions/search/download",
+				"patent-applications-search-download":            "/api/v1/patent/applications/search/download",
+				"patent-interferences-decisions-search-download": "/api/v1/patent/interferences/decisions/search/download",
+				"patent-trials-decisions-search-download":        "/api/v1/patent/trials/decisions/search/download",
+				"patent-trials-documents-search-download":        "/api/v1/patent/trials/documents/search/download",
+				"patent-trials-proceedings-search-download":      "/api/v1/patent/trials/proceedings/search/download",
+				"petition":                                       "/api/v1/petition/decisions/search",
+				"petition-decisions-search-download":             "/api/v1/petition/decisions/search/download",
+			}
+			path, ok := importPaths[resource]
+			if !ok {
+				return fmt.Errorf("unknown resource %q; valid resources: datasets, patent, petition, etc.", resource)
+			}
 
 			var reader io.Reader
 			if inputFile == "-" || inputFile == "" {
@@ -103,7 +119,6 @@ but do not stop the import.`,
 	cmd.Flags().StringVarP(&inputFile, "input", "i", "", "Input JSONL file path (use - for stdin)")
 	_ = cmd.MarkFlagRequired("input")
 	cmd.Flags().BoolVar(&dryRun, "dry-run", false, "Preview import without sending requests")
-	cmd.Flags().IntVar(&batchSize, "batch-size", 1, "Records per batch (future: batch API support)")
 
 	return cmd
 }
